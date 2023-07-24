@@ -1,0 +1,101 @@
+/generate random numbers between p and q
+#include <stdio.h>
+#include <stdlib.h>
+
+// Binary Search Tree Node
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new Node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a Node into BST
+struct Node* insertNode(struct Node* root, int data) {
+    if (root == NULL)
+        return createNode(data);
+
+    if (data < root->data)
+        root->left = insertNode(root->left, data);
+    else if (data > root->data)
+        root->right = insertNode(root->right, data);
+
+    return root;
+}
+
+// Function for Preorder traversal
+void preorderTraversal(struct Node* root,FILE* preorder) {
+    if (root == NULL)
+        return;
+
+
+    fprintf(preorder,"%d ", root->data);
+    preorderTraversal(root->left,preorder);
+    preorderTraversal(root->right,preorder);
+}
+
+// Function for Inorder traversal
+void inorderTraversal(struct Node* root,FILE* inorder) {
+    if (root == NULL)
+        return;
+
+    inorderTraversal(root->left,inorder);
+    fprintf(inorder,"%d ", root->data);
+    inorderTraversal(root->right,inorder);
+}
+
+void postorderTraversal(struct Node* root,FILE* postorder) {
+    if (root == NULL)
+        return;
+
+    postorderTraversal(root->left,postorder);
+    postorderTraversal(root->right,postorder);
+    fprintf(postorder,"%d ", root->data);
+}
+
+int generateRandomNumber(int p,int q) {
+    return (rand() % (q-p)) + p;
+}
+
+int main() {
+    struct Node* root = NULL;
+    int n, data;
+    int p,q;
+
+    printf("Enter the number of random numbers to generate: ");
+    scanf("%d", &n);
+
+    printf("Enter the range of numbers (P and Q): ");
+    scanf("%d %d", &p, &q);
+
+    printf("Generating %d random numbers...\n", n);
+
+    for (int i = 0; i < n; i++) {
+        data = generateRandomNumber(p,q);
+        printf("%d ",data);
+        root = insertNode(root, data);
+    }
+    FILE *inorder = fopen("inOrder.txt","w");
+    FILE *preorder = fopen("preOrder.txt","w");
+    FILE *postorder = fopen("postOrder.txt","w");
+    printf("\nPreorder Traversal: ");
+    preorderTraversal(root,preorder);
+
+    printf("\nInorder Traversal: ");
+    inorderTraversal(root,inorder);
+
+    printf("\nPostorder Traversal: ");
+    postorderTraversal(root,postorder);
+
+    printf("\n");
+
+    return 0;
+}
+
